@@ -1,52 +1,70 @@
 /**
- * Wires up the landing page interactions (channel toggle, comparison tabs,
- * scroll reveals, cursor spotlight, magnetic buttons, number tickers).
+ * Wires up the landing page interactions (hero phone slideshow, comparison
+ * tabs, scroll reveals, cursor spotlight, magnetic buttons, number tickers).
  * Returns a cleanup function that detaches global listeners/observers.
  */
 export function initLanding(root: HTMLElement): () => void {
   const observers: IntersectionObserver[] = [];
   const cleanups: Array<() => void> = [];
 
-  /* ---- channel toggle ---- */
-  const toggle = root.querySelector<HTMLElement>(".channel-toggle");
-  if (toggle) {
-    const glow = toggle.querySelector<HTMLElement>(".ch-glow");
-    const btns = Array.from(toggle.querySelectorAll<HTMLElement>(".ch-btn"));
-    const move = (btn: HTMLElement) => {
-      btns.forEach((b) => b.classList.toggle("active", b === btn));
-      if (glow) glow.style.transform = `translateX(${btn.offsetLeft - btns[0].offsetLeft}px)`;
+  /* ---- hero phone: auto-advancing slideshow ---- */
+  const phoneText = root.querySelector<HTMLElement>(".ph-text");
+  const phoneBars = Array.from(root.querySelectorAll<HTMLElement>(".ph-progress i"));
+  if (phoneText && phoneBars.length) {
+    const slides = [
+      "3 reasons nobody<br><b>sees your product</b>",
+      "You post<br><b>once a month</b>",
+      "You're invisible<br><b>on TikTok</b>",
+      "You quit before<br><b>it compounded</b>",
+      "Fix all three.<br><b>On autopilot.</b>",
+      "@yourbrand<br><b>posts daily now</b> →",
+    ];
+    let i = 0;
+    const render = () => {
+      phoneBars.forEach((b, idx) => b.classList.toggle("on", idx <= i));
+      phoneText.style.opacity = "0";
+      phoneText.style.transform = "translateY(8px)";
+      setTimeout(() => {
+        phoneText.innerHTML = slides[i] ?? "";
+        phoneText.style.opacity = "1";
+        phoneText.style.transform = "none";
+      }, 220);
     };
-    btns.forEach((b) => b.addEventListener("click", () => move(b)));
-    if (btns[0]) move(btns[0]);
+    render();
+    const timer = setInterval(() => {
+      i = (i + 1) % slides.length;
+      render();
+    }, 2600);
+    cleanups.push(() => clearInterval(timer));
   }
 
   /* ---- comparison tabs ---- */
   const tabs = Array.from(root.querySelectorAll<HTMLElement>(".cmp-tab"));
   if (tabs.length) {
     const copy: Record<string, { gpt: string; blimely: string; tag: string; file: string }> = {
-      report: {
-        gpt: "Explains how to build a sales report. You still pull the data and make it.",
-        blimely: "Pulls last night’s numbers and posts a clean recap every morning at 8.",
-        tag: "Builds it. Posts the PDF.",
-        file: "Daily-Recap.pdf",
+      understand: {
+        gpt: "You write the brief and guess your own angles and hooks.",
+        blimely: "Reads your site and nails your audience and their pain points.",
+        tag: "Knows your business",
+        file: "Audience locked in",
       },
-      research: {
-        gpt: "Gives you a framework for researching leads. You open the 30 tabs.",
-        blimely: "Enriches every new signup and drops a ranked shortlist in your channel daily.",
-        tag: "Researches it. Posts the list.",
-        file: "Hot-Leads.csv",
+      generate: {
+        gpt: "Hands you a pile of clips to caption and sort through yourself.",
+        blimely: "Writes and designs swipeable slideshows in your brand voice.",
+        tag: "Builds the slideshow",
+        file: "On-brand, ready",
       },
-      content: {
-        gpt: "Outlines how to make a trends deck. You build all the slides.",
-        blimely: "Ships three slides on what’s trending, in your format, every day at noon.",
-        tag: "Makes it. Posts the deck.",
-        file: "Trends.pdf",
+      schedule: {
+        gpt: "You drag each post into a calendar and pick every time slot.",
+        blimely: "Fills your week and queues posts at the times that land best.",
+        tag: "Fills your calendar",
+        file: "Week queued",
       },
-      ops: {
-        gpt: "Describes a process for comparing suppliers. Then it waits on you.",
-        blimely: "Compares your suppliers every week and flags where you’re overpaying.",
-        tag: "Does it. Posts the result.",
-        file: "Supplier-Check.pdf",
+      post: {
+        gpt: "Reminds you to post, then waits for you to actually do it.",
+        blimely: "Publishes straight to your TikTok, on schedule, on its own.",
+        tag: "Posts it for you",
+        file: "Posted to TikTok",
       },
     };
     const gptLine = root.querySelector<HTMLElement>(".cmp-card.chatgpt .cmp-line");
