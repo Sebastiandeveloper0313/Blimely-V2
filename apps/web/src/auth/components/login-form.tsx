@@ -1,19 +1,9 @@
 import { useForm } from "@tanstack/react-form";
-import { useNavigate } from "@tanstack/react-router";
-import { Button } from "@workspace/ui/components/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card";
-import { Field, FieldError, FieldLabel } from "@workspace/ui/components/field";
-import { Input } from "@workspace/ui/components/input";
-import { Spinner } from "@workspace/ui/components/spinner";
+import { Link, useNavigate } from "@tanstack/react-router";
 
 import { useSignIn } from "../hooks";
 import { loginSchema } from "../schemas";
+import { AuthMark } from "./auth-shell";
 
 export function LoginForm() {
   const signIn = useSignIn();
@@ -34,70 +24,69 @@ export function LoginForm() {
   });
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle className="text-2xl">Log in</CardTitle>
-        <CardDescription>Enter your email and password to access your account</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            void form.handleSubmit();
-          }}
-          className="flex flex-col gap-4"
-        >
-          <form.Field
-            name="email"
-            children={(field) => {
-              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-              return (
-                <Field data-invalid={isInvalid}>
-                  <FieldLabel htmlFor={field.name}>Email</FieldLabel>
-                  <Input
-                    id={field.name}
-                    type="email"
-                    placeholder="you@example.com"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    aria-invalid={isInvalid}
-                  />
-                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                </Field>
-              );
-            }}
-          />
+    <form
+      className="auth-card"
+      onSubmit={(e) => {
+        e.preventDefault();
+        void form.handleSubmit();
+      }}
+    >
+      <AuthMark />
+      <h1>Welcome back</h1>
+      <p className="auth-sub">Log in to your Blimely account</p>
 
-          <form.Field
-            name="password"
-            children={(field) => {
-              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-              return (
-                <Field data-invalid={isInvalid}>
-                  <FieldLabel htmlFor={field.name}>Password</FieldLabel>
-                  <Input
-                    id={field.name}
-                    type="password"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    aria-invalid={isInvalid}
-                  />
-                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                </Field>
-              );
-            }}
-          />
+      <form.Field
+        name="email"
+        children={(field) => {
+          const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+          return (
+            <div className="auth-field">
+              <label htmlFor={field.name}>Email</label>
+              <input
+                id={field.name}
+                type="email"
+                placeholder="you@example.com"
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={(e) => field.handleChange(e.target.value)}
+                aria-invalid={isInvalid}
+              />
+              {isInvalid && <p className="auth-err">{field.state.meta.errors[0]?.message}</p>}
+            </div>
+          );
+        }}
+      />
 
-          {signIn.error && <p className="text-destructive text-sm">{signIn.error.message}</p>}
+      <form.Field
+        name="password"
+        children={(field) => {
+          const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+          return (
+            <div className="auth-field">
+              <label htmlFor={field.name}>Password</label>
+              <input
+                id={field.name}
+                type="password"
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={(e) => field.handleChange(e.target.value)}
+                aria-invalid={isInvalid}
+              />
+              {isInvalid && <p className="auth-err">{field.state.meta.errors[0]?.message}</p>}
+            </div>
+          );
+        }}
+      />
 
-          <Button type="submit" className="w-full" disabled={signIn.isPending}>
-            {signIn.isPending && <Spinner />}
-            Sign in
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+      {signIn.error && <div className="auth-formerr">{signIn.error.message}</div>}
+
+      <button type="submit" className="btn btn-blue auth-submit" disabled={signIn.isPending}>
+        {signIn.isPending ? "Signing in…" : "Sign in"}
+      </button>
+
+      <p className="auth-foot">
+        Don&apos;t have an account? <Link to="/auth/signup">Sign up</Link>
+      </p>
+    </form>
   );
 }

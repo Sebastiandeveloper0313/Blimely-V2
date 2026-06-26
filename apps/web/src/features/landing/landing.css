@@ -671,3 +671,8 @@ html{scroll-behavior:smooth}
   .auth-card{padding:2rem 1.5rem}
   .auth-home{top:18px;left:18px}
 }
+
+/* auth form validation messages */
+.auth-err{color:#e0245e;font-size:.8rem;font-weight:500;margin-top:.35rem}
+.auth-formerr{margin-top:.2rem;color:#c01d4f;font-size:.88rem;font-weight:500;
+  background:rgba(224,36,94,.08);border:1px solid rgba(224,36,94,.22);border-radius:12px;padding:.65rem .8rem}
