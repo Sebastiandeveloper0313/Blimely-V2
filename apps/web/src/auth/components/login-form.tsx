@@ -1,6 +1,8 @@
 import { useForm } from "@tanstack/react-form";
 import { Link, useNavigate } from "@tanstack/react-router";
 
+import { isOnboarded } from "@/features/workspace/store";
+
 import { useSignIn } from "../hooks";
 import { loginSchema } from "../schemas";
 import { AuthMark } from "./auth-shell";
@@ -19,7 +21,10 @@ export function LoginForm() {
     },
     onSubmit: async ({ value }) => {
       await signIn.mutateAsync(value);
-      void navigate({ to: "/dashboard" });
+      // First-run users go through onboarding; returning users land on the
+      // dashboard. Backed by the local workspace store for now — swap for the
+      // profiles.onboarded column once the migration is applied.
+      void navigate({ to: isOnboarded() ? "/dashboard" : "/onboarding" });
     },
   });
 
