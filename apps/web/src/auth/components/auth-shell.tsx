@@ -11,7 +11,11 @@ export function AuthShell({ children }: { children: ReactNode }) {
   return (
     <div className="auth-body">
       <div className="auth-sky" aria-hidden="true">
-        <svg viewBox="0 0 1440 860" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          viewBox="0 0 1440 860"
+          preserveAspectRatio="xMidYMid slice"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <defs>
             <linearGradient id="authsky" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stopColor="#a8c2e6" />
