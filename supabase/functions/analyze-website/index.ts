@@ -100,7 +100,9 @@ Deno.serve(async (req) => {
 
     const { url, description, company }: AnalyzeBody = await req.json();
 
-    const source = url ? await getSourceText(url, Deno.env.get("FIRECRAWL_API_KEY")) : (description?.trim() ?? "");
+    const source = url
+      ? await getSourceText(url, Deno.env.get("FIRECRAWL_API_KEY"))
+      : (description?.trim() ?? "");
 
     if (!source) {
       return new Response(JSON.stringify({ error: "No website text or description to analyze" }), {

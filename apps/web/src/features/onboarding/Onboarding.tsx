@@ -28,20 +28,45 @@ const STEPS = [
   { title: "Analyze your website", sub: "We use this to understand your brand and what to post." },
   { title: "Tell us about yourself", sub: "This helps us tailor recommendations to your stage." },
   { title: "What describes you best?", sub: "We'll shape your experience around your role." },
-  { title: "What type of business do you run?", sub: "So Blimely makes content that resonates with your audience." },
+  {
+    title: "What type of business do you run?",
+    sub: "So Blimely makes content that resonates with your audience.",
+  },
   { title: "Connect your TikTok", sub: "Blimely posts your slideshows straight to this account." },
   { title: "You're all set", sub: "Autopilot is ready to start." },
 ];
 
 const TEAM = ["Just me", "2 - 5", "6 - 10", "11 - 20", "21 - 50", "50+"];
-const REVENUE = ["Pre-revenue", "$1 - $1,000", "$1k - $10k", "$10k - $50k", "$50k - $500k", "$500k+"];
+const REVENUE = [
+  "Pre-revenue",
+  "$1 - $1,000",
+  "$1k - $10k",
+  "$10k - $50k",
+  "$50k - $500k",
+  "$500k+",
+];
 const ROLES = [
-  "Founder", "Social Media Manager", "Marketing Manager",
-  "Agency Owner", "Freelancer", "Product Manager",
-  "Content Creator", "Growth Manager", "Other",
+  "Founder",
+  "Social Media Manager",
+  "Marketing Manager",
+  "Agency Owner",
+  "Freelancer",
+  "Product Manager",
+  "Content Creator",
+  "Growth Manager",
+  "Other",
 ];
 const MODELS = ["B2B", "B2C", "Both"];
-const CATEGORIES = ["E-commerce", "SaaS", "Agency", "Services", "Marketplace", "Media/Content", "Mobile app", "Other"];
+const CATEGORIES = [
+  "E-commerce",
+  "SaaS",
+  "Agency",
+  "Services",
+  "Marketplace",
+  "Media/Content",
+  "Mobile app",
+  "Other",
+];
 const CADENCE = ["3 / week", "1 / day", "2 / day"];
 
 interface FormData {
@@ -158,7 +183,11 @@ export function Onboarding() {
   return (
     <div className="blimely onb">
       <div className="onb-sky" aria-hidden="true">
-        <svg viewBox="0 0 1440 860" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          viewBox="0 0 1440 860"
+          preserveAspectRatio="xMidYMid slice"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <defs>
             <linearGradient id="onbsky" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stopColor="#a8c2e6" />
@@ -171,8 +200,19 @@ export function Onboarding() {
               <stop offset="55%" stopColor="#ffffff" stopOpacity="0" />
             </radialGradient>
             <filter id="onbclouds" x="-10%" y="-10%" width="120%" height="120%">
-              <feTurbulence type="fractalNoise" baseFrequency="0.0032 0.0062" numOctaves="4" seed="22" stitchTiles="stitch" result="t" />
-              <feColorMatrix in="t" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 -1.55 1.3" />
+              <feTurbulence
+                type="fractalNoise"
+                baseFrequency="0.0032 0.0062"
+                numOctaves="4"
+                seed="22"
+                stitchTiles="stitch"
+                result="t"
+              />
+              <feColorMatrix
+                in="t"
+                type="matrix"
+                values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 -1.55 1.3"
+              />
             </filter>
           </defs>
           <rect width="1440" height="860" fill="url(#onbsky)" />
@@ -185,7 +225,12 @@ export function Onboarding() {
         <span className="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 100 100" width="28" height="28">
             <rect width="100" height="100" rx="28" fill="url(#onbmark)" />
-            <path d="M34 32h34M34 50h27M34 68h18" stroke="white" strokeWidth="9" strokeLinecap="round" />
+            <path
+              d="M34 32h34M34 50h27M34 68h18"
+              stroke="white"
+              strokeWidth="9"
+              strokeLinecap="round"
+            />
             <defs>
               <linearGradient id="onbmark" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0" stopColor="#5aa6ff" />
@@ -204,8 +249,12 @@ export function Onboarding() {
             <b>Preparing workspace</b>
             <span>Reading your site…</span>
             <div className="ot-steps">
-              <i className="ok"><span className="d" /> Website</i>
-              <i><span className="d" /> Profile</i>
+              <i className="ok">
+                <span className="d" /> Website
+              </i>
+              <i>
+                <span className="d" /> Profile
+              </i>
             </div>
           </div>
         </div>
@@ -222,7 +271,8 @@ export function Onboarding() {
           {step === 0 && (
             <>
               <div className="onb-banner">
-                Everything you enter here is used <b>directly across Blimely</b> to shape your posts.
+                Everything you enter here is used <b>directly across Blimely</b> to shape your
+                posts.
               </div>
               <div className="profile-grid">
                 <div>
@@ -251,13 +301,27 @@ export function Onboarding() {
                       </>
                     )}
                   </button>
-                  <input ref={fileRef} type="file" accept="image/png,image/jpeg" hidden onChange={onLogo} />
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    accept="image/png,image/jpeg"
+                    hidden
+                    onChange={onLogo}
+                  />
                 </div>
 
                 <div>
                   <div className="auth-field">
                     <label htmlFor="onb-name">
-                      <User style={{ width: 14, height: 14, display: "inline", marginRight: 4, verticalAlign: "-2px" }} />
+                      <User
+                        style={{
+                          width: 14,
+                          height: 14,
+                          display: "inline",
+                          marginRight: 4,
+                          verticalAlign: "-2px",
+                        }}
+                      />
                       Your name
                     </label>
                     <input
@@ -269,7 +333,15 @@ export function Onboarding() {
                   </div>
                   <div className="auth-field">
                     <label htmlFor="onb-company">
-                      <Building2 style={{ width: 14, height: 14, display: "inline", marginRight: 4, verticalAlign: "-2px" }} />
+                      <Building2
+                        style={{
+                          width: 14,
+                          height: 14,
+                          display: "inline",
+                          marginRight: 4,
+                          verticalAlign: "-2px",
+                        }}
+                      />
                       Company name
                     </label>
                     <input
@@ -282,7 +354,11 @@ export function Onboarding() {
                 </div>
               </div>
               <div className="onb-actions">
-                <button className="btn btn-blue" disabled={!data.name || !data.company} onClick={next}>
+                <button
+                  className="btn btn-blue"
+                  disabled={!data.name || !data.company}
+                  onClick={next}
+                >
                   Continue
                 </button>
               </div>
@@ -293,10 +369,16 @@ export function Onboarding() {
           {step === 1 && (
             <>
               <div className="onb-seg">
-                <button className={cn("seg-btn", data.mode === "website" && "on")} onClick={() => set("mode", "website")}>
+                <button
+                  className={cn("seg-btn", data.mode === "website" && "on")}
+                  onClick={() => set("mode", "website")}
+                >
                   <Globe /> Website
                 </button>
-                <button className={cn("seg-btn", data.mode === "description" && "on")} onClick={() => set("mode", "description")}>
+                <button
+                  className={cn("seg-btn", data.mode === "description" && "on")}
+                  onClick={() => set("mode", "description")}
+                >
                   <FileText /> Use description instead
                 </button>
               </div>
@@ -304,7 +386,15 @@ export function Onboarding() {
               {data.mode === "website" ? (
                 <div className="auth-field">
                   <label htmlFor="onb-web">
-                    <Globe style={{ width: 14, height: 14, display: "inline", marginRight: 4, verticalAlign: "-2px" }} />
+                    <Globe
+                      style={{
+                        width: 14,
+                        height: 14,
+                        display: "inline",
+                        marginRight: 4,
+                        verticalAlign: "-2px",
+                      }}
+                    />
                     Company website
                   </label>
                   <input
@@ -340,7 +430,12 @@ export function Onboarding() {
               <div className="onb-actions">
                 <button
                   className="btn btn-blue"
-                  disabled={analyzing || (data.mode === "website" ? data.website.length < 12 : data.description.length < 10)}
+                  disabled={
+                    analyzing ||
+                    (data.mode === "website"
+                      ? data.website.length < 12
+                      : data.description.length < 10)
+                  }
                   onClick={() => void analyze()}
                 >
                   {analyzing ? (
@@ -354,7 +449,9 @@ export function Onboarding() {
                     </>
                   )}
                 </button>
-                <button className="onb-back" onClick={back}>← Back</button>
+                <button className="onb-back" onClick={back}>
+                  ← Back
+                </button>
               </div>
             </>
           )}
@@ -367,7 +464,11 @@ export function Onboarding() {
               </div>
               <div className="opt-grid">
                 {TEAM.map((t) => (
-                  <button key={t} className={cn("opt", data.team === t && "selected")} onClick={() => set("team", t)}>
+                  <button
+                    key={t}
+                    className={cn("opt", data.team === t && "selected")}
+                    onClick={() => set("team", t)}
+                  >
                     {t}
                   </button>
                 ))}
@@ -377,16 +478,26 @@ export function Onboarding() {
               </div>
               <div className="opt-grid">
                 {REVENUE.map((r) => (
-                  <button key={r} className={cn("opt", data.revenue === r && "selected")} onClick={() => set("revenue", r)}>
+                  <button
+                    key={r}
+                    className={cn("opt", data.revenue === r && "selected")}
+                    onClick={() => set("revenue", r)}
+                  >
                     {r}
                   </button>
                 ))}
               </div>
               <div className="onb-actions">
-                <button className="btn btn-blue" disabled={!data.team || !data.revenue} onClick={next}>
+                <button
+                  className="btn btn-blue"
+                  disabled={!data.team || !data.revenue}
+                  onClick={next}
+                >
                   Continue
                 </button>
-                <button className="onb-change" onClick={() => setStep(1)}>Change website or description</button>
+                <button className="onb-change" onClick={() => setStep(1)}>
+                  Change website or description
+                </button>
               </div>
             </>
           )}
@@ -399,7 +510,11 @@ export function Onboarding() {
               </div>
               <div className="opt-grid">
                 {ROLES.map((r) => (
-                  <button key={r} className={cn("opt", data.role === r && "selected")} onClick={() => set("role", r)}>
+                  <button
+                    key={r}
+                    className={cn("opt", data.role === r && "selected")}
+                    onClick={() => set("role", r)}
+                  >
                     {r}
                   </button>
                 ))}
@@ -408,7 +523,9 @@ export function Onboarding() {
                 <button className="btn btn-blue" disabled={!data.role} onClick={next}>
                   Continue
                 </button>
-                <button className="onb-back" onClick={back}>← Back</button>
+                <button className="onb-back" onClick={back}>
+                  ← Back
+                </button>
               </div>
             </>
           )}
@@ -421,7 +538,11 @@ export function Onboarding() {
               </div>
               <div className="opt-grid">
                 {MODELS.map((m) => (
-                  <button key={m} className={cn("opt", data.model === m && "selected")} onClick={() => set("model", m)}>
+                  <button
+                    key={m}
+                    className={cn("opt", data.model === m && "selected")}
+                    onClick={() => set("model", m)}
+                  >
                     {m}
                   </button>
                 ))}
@@ -431,16 +552,26 @@ export function Onboarding() {
               </div>
               <div className="opt-grid c4">
                 {CATEGORIES.map((c) => (
-                  <button key={c} className={cn("opt", data.categories.includes(c) && "selected")} onClick={() => toggleCategory(c)}>
+                  <button
+                    key={c}
+                    className={cn("opt", data.categories.includes(c) && "selected")}
+                    onClick={() => toggleCategory(c)}
+                  >
                     {c}
                   </button>
                 ))}
               </div>
               <div className="onb-actions">
-                <button className="btn btn-blue" disabled={!data.model || data.categories.length === 0} onClick={next}>
+                <button
+                  className="btn btn-blue"
+                  disabled={!data.model || data.categories.length === 0}
+                  onClick={next}
+                >
                   Continue
                 </button>
-                <button className="onb-back" onClick={back}>← Back</button>
+                <button className="onb-back" onClick={back}>
+                  ← Back
+                </button>
               </div>
             </>
           )}
@@ -459,12 +590,25 @@ export function Onboarding() {
                   <b>Connect with TikTok</b>
                   <span>Secure OAuth, takes a few seconds</span>
                 </div>
-                <button className="btn btn-dark" style={{ padding: ".65rem 1.1rem" }} onClick={() => { set("tiktok", "@yourbrand"); next(); }}>
+                <button
+                  className="btn btn-dark"
+                  style={{ padding: ".65rem 1.1rem" }}
+                  onClick={() => {
+                    set("tiktok", "@yourbrand");
+                    next();
+                  }}
+                >
                   Connect
                 </button>
               </div>
               <div className="onb-or">or</div>
-              <button className="opt wide" onClick={() => { set("tiktok", ""); next(); }}>
+              <button
+                className="opt wide"
+                onClick={() => {
+                  set("tiktok", "");
+                  next();
+                }}
+              >
                 Let Blimely create a fresh account for the brand
               </button>
 
@@ -473,13 +617,19 @@ export function Onboarding() {
               </div>
               <div className="opt-grid">
                 {CADENCE.map((c) => (
-                  <button key={c} className={cn("opt", data.cadence === c && "selected")} onClick={() => set("cadence", c)}>
+                  <button
+                    key={c}
+                    className={cn("opt", data.cadence === c && "selected")}
+                    onClick={() => set("cadence", c)}
+                  >
                     {c}
                   </button>
                 ))}
               </div>
               <div className="onb-actions">
-                <button className="onb-back" onClick={back}>← Back</button>
+                <button className="onb-back" onClick={back}>
+                  ← Back
+                </button>
               </div>
             </>
           )}
@@ -493,13 +643,23 @@ export function Onboarding() {
               <h2>You're all set{data.name ? `, ${data.name.split(" ")[0]}` : ""}.</h2>
               <p>
                 Blimely will build slideshows from{" "}
-                <b>{data.mode === "website" && data.website !== "https://" ? data.website.replace(/^https?:\/\//, "") : data.company || "your business"}</b>{" "}
+                <b>
+                  {data.mode === "website" && data.website !== "https://"
+                    ? data.website.replace(/^https?:\/\//, "")
+                    : data.company || "your business"}
+                </b>{" "}
                 and post to <b>{data.tiktok || "your new TikTok"}</b> on autopilot.
               </p>
               <div className="done-chips">
-                <span className="chip"><Globe /> {data.mode === "website" ? "Website analyzed" : "Description added"}</span>
-                <span className="chip"><Briefcase /> {data.role}</span>
-                <span className="chip"><Clock /> {data.cadence}</span>
+                <span className="chip">
+                  <Globe /> {data.mode === "website" ? "Website analyzed" : "Description added"}
+                </span>
+                <span className="chip">
+                  <Briefcase /> {data.role}
+                </span>
+                <span className="chip">
+                  <Clock /> {data.cadence}
+                </span>
               </div>
               <button className="btn btn-blue btn-lg" onClick={finish}>
                 Go to your dashboard <ChevronRight style={{ width: 18, height: 18 }} />

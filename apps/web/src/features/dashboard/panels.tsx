@@ -43,9 +43,7 @@ function SlideThumb({
   className?: string;
 }) {
   return (
-    <div
-      className={cn("slide-thumb", GRAD[idx % 4], variant === "sm" && "sm", className)}
-    >
+    <div className={cn("slide-thumb", GRAD[idx % 4], variant === "sm" && "sm", className)}>
       {variant === "cover" && (
         <>
           <span className="frames">
@@ -60,8 +58,7 @@ function SlideThumb({
 
 /* ============================== HOME ============================== */
 
-const hasWebsite = (ws: Workspace) =>
-  ws.website.trim() !== "" && ws.website.trim() !== "https://";
+const hasWebsite = (ws: Workspace) => ws.website.trim() !== "" && ws.website.trim() !== "https://";
 
 export function Home({
   account,
@@ -76,9 +73,24 @@ export function Home({
 }) {
   const steps = [
     { label: "Add your website", done: hasWebsite(ws), action: onAddWebsite, platforms: false },
-    { label: "Connect your TikTok", done: Boolean(ws.tiktok), action: () => onNavigate("settings"), platforms: true },
-    { label: "Generate your first slideshows", done: false, action: () => onNavigate("queue"), platforms: false },
-    { label: "Schedule your first post", done: false, action: () => onNavigate("queue"), platforms: false },
+    {
+      label: "Connect your TikTok",
+      done: Boolean(ws.tiktok),
+      action: () => onNavigate("settings"),
+      platforms: true,
+    },
+    {
+      label: "Generate your first slideshows",
+      done: false,
+      action: () => onNavigate("queue"),
+      platforms: false,
+    },
+    {
+      label: "Schedule your first post",
+      done: false,
+      action: () => onNavigate("queue"),
+      platforms: false,
+    },
   ];
   const completed = steps.filter((s) => s.done).length;
 
@@ -87,7 +99,12 @@ export function Home({
       <div className="home-mark" aria-hidden="true">
         <svg viewBox="0 0 100 100" width="46" height="46">
           <rect width="100" height="100" rx="26" fill="url(#homemark)" />
-          <path d="M34 32h34M34 50h27M34 68h18" stroke="white" strokeWidth="9" strokeLinecap="round" />
+          <path
+            d="M34 32h34M34 50h27M34 68h18"
+            stroke="white"
+            strokeWidth="9"
+            strokeLinecap="round"
+          />
           <defs>
             <linearGradient id="homemark" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0" stopColor="#5aa6ff" />
@@ -101,17 +118,15 @@ export function Home({
       <div className="quickstart">
         <div className="qs-head">
           <h2>Quickstart</h2>
-          <span className="qs-count">{completed}/{steps.length}</span>
+          <span className="qs-count">
+            {completed}/{steps.length}
+          </span>
         </div>
         <p className="qs-sub">Complete these to get the most out of Blimely</p>
         <div className="qs-divider" />
         <div className="qs-steps">
           {steps.map((s) => (
-            <button
-              key={s.label}
-              className={cn("qs-step", s.done && "done")}
-              onClick={s.action}
-            >
+            <button key={s.label} className={cn("qs-step", s.done && "done")} onClick={s.action}>
               <span className="qs-check">{s.done && <Check />}</span>
               <span className="qs-label">{s.label}</span>
               {s.platforms && (
@@ -282,7 +297,11 @@ function BrandEdit({ ws, onDone }: { ws: Workspace; onDone: () => void }) {
 
   const save = () => {
     const trimmed = website.trim();
-    const normalized = trimmed ? (/^https?:\/\//.test(trimmed) ? trimmed : `https://${trimmed}`) : ws.website;
+    const normalized = trimmed
+      ? /^https?:\/\//.test(trimmed)
+        ? trimmed
+        : `https://${trimmed}`
+      : ws.website;
     saveWorkspace({
       company: company.trim(),
       website: normalized,
@@ -308,34 +327,81 @@ function BrandEdit({ ws, onDone }: { ws: Workspace; onDone: () => void }) {
         <div className="edit-grid">
           <div className="edit-field">
             <label htmlFor="be-company">Company name</label>
-            <input id="be-company" value={company} placeholder="Your company" onChange={(e) => setCompany(e.target.value)} />
+            <input
+              id="be-company"
+              value={company}
+              placeholder="Your company"
+              onChange={(e) => setCompany(e.target.value)}
+            />
           </div>
           <div className="edit-field">
             <label htmlFor="be-tiktok">TikTok handle</label>
-            <input id="be-tiktok" value={tiktok} placeholder="@yourbrand" onChange={(e) => setTiktok(e.target.value)} />
+            <input
+              id="be-tiktok"
+              value={tiktok}
+              placeholder="@yourbrand"
+              onChange={(e) => setTiktok(e.target.value)}
+            />
           </div>
         </div>
         <div className="edit-field">
           <label htmlFor="be-website">Website</label>
-          <input id="be-website" value={website} placeholder="yourbrand.com" onChange={(e) => setWebsite(e.target.value)} />
+          <input
+            id="be-website"
+            value={website}
+            placeholder="yourbrand.com"
+            onChange={(e) => setWebsite(e.target.value)}
+          />
         </div>
         <div className="edit-field">
           <label htmlFor="be-summary">What you do</label>
-          <textarea id="be-summary" rows={2} value={summary} onChange={(e) => setSummary(e.target.value)} />
+          <textarea
+            id="be-summary"
+            rows={2}
+            value={summary}
+            onChange={(e) => setSummary(e.target.value)}
+          />
         </div>
         <div className="edit-field">
           <label htmlFor="be-audience">Who it's for</label>
-          <textarea id="be-audience" rows={2} value={audience} onChange={(e) => setAudience(e.target.value)} />
+          <textarea
+            id="be-audience"
+            rows={2}
+            value={audience}
+            onChange={(e) => setAudience(e.target.value)}
+          />
         </div>
         <div className="edit-field">
           <label htmlFor="be-p1">Pain points</label>
-          <input id="be-p1" value={p1} placeholder="Pain point 1" onChange={(e) => setP1(e.target.value)} style={{ marginBottom: ".5rem" }} />
-          <input value={p2} placeholder="Pain point 2" aria-label="Pain point 2" onChange={(e) => setP2(e.target.value)} style={{ marginBottom: ".5rem" }} />
-          <input value={p3} placeholder="Pain point 3" aria-label="Pain point 3" onChange={(e) => setP3(e.target.value)} />
+          <input
+            id="be-p1"
+            value={p1}
+            placeholder="Pain point 1"
+            onChange={(e) => setP1(e.target.value)}
+            style={{ marginBottom: ".5rem" }}
+          />
+          <input
+            value={p2}
+            placeholder="Pain point 2"
+            aria-label="Pain point 2"
+            onChange={(e) => setP2(e.target.value)}
+            style={{ marginBottom: ".5rem" }}
+          />
+          <input
+            value={p3}
+            placeholder="Pain point 3"
+            aria-label="Pain point 3"
+            onChange={(e) => setP3(e.target.value)}
+          />
         </div>
         <div className="edit-field">
           <label htmlFor="be-voice">Brand voice</label>
-          <textarea id="be-voice" rows={2} value={voice} onChange={(e) => setVoice(e.target.value)} />
+          <textarea
+            id="be-voice"
+            rows={2}
+            value={voice}
+            onChange={(e) => setVoice(e.target.value)}
+          />
         </div>
         <div className="edit-actions">
           <button className="btn-ghost" onClick={onDone}>
@@ -390,7 +456,9 @@ export function BrandPanel({
             </span>
             <div className="sr-meta">
               <b>{fromWebsite ? account.website : ws.company || "Your business"}</b>
-              <span>{fromWebsite ? "Source website · read & understood" : "From your description"}</span>
+              <span>
+                {fromWebsite ? "Source website · read & understood" : "From your description"}
+              </span>
             </div>
             <span className="sr-ok">
               <Check />
