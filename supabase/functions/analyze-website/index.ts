@@ -1,14 +1,16 @@
 // Supabase Edge Function: analyze-website
 //
-// Reads a company's website (or a description) and extracts the brand
-// understanding Blimely builds slideshows from. Calls the Anthropic API with
-// structured outputs so the result is always valid JSON.
+// Scrapes a company's website with Firecrawl (clean markdown, handles
+// JS-rendered pages), then extracts the brand understanding Blimely builds
+// slideshows from via the Anthropic API with structured outputs.
 //
 // Deploy:   supabase functions deploy analyze-website
-// Secret:   supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
+// Secrets:  supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
+//           supabase secrets set FIRECRAWL_API_KEY=fc-...   (optional but recommended)
 //
-// The web app calls this via supabase.functions.invoke("analyze-website").
-// If it isn't deployed yet, the client falls back to an input-derived analysis.
+// Without FIRECRAWL_API_KEY it falls back to a basic fetch + HTML strip.
+// The web app calls this via supabase.functions.invoke("analyze-website");
+// if it isn't reachable, the client falls back to an input-derived analysis.
 
 import Anthropic from "npm:@anthropic-ai/sdk";
 
@@ -40,7 +42,7 @@ const SCHEMA = {
   },
 } as const;
 
-/** Strip a fetched HTML page down to readable text. */
+/** Strip a fetched HTML page down to readable text (fallback path). */
 function htmlToText(html: string): string {
   return html
     .replace(/<script[\s\S]*?<\/script>/gi, " ")
@@ -50,6 +52,38 @@ function htmlToText(html: string): string {
     .replace(/\s+/g, " ")
     .trim()
     .slice(0, 12000);
+}
+
+/** Scrape a URL to clean markdown with Firecrawl. Returns null on any failure. */
+async function scrapeWithFirecrawl(url: string, key: string): Promise<string | null> {
+  try {
+    const res = await fetch("https://api.firecrawl.dev/v1/scrape", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ url, formats: ["markdown"], onlyMainContent: true }),
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    const markdown = json?.data?.markdown;
+    return typeof markdown === "string" && markdown.trim() ? markdown.slice(0, 12000) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Get the page text for a URL: Firecrawl first, basic fetch as a fallback. */
+async function getSourceText(url: string, firecrawlKey?: string): Promise<string> {
+  if (firecrawlKey) {
+    const md = await scrapeWithFirecrawl(url, firecrawlKey);
+    if (md) return md;
+  }
+  try {
+    const page = await fetch(url, { headers: { "User-Agent": "BlimelyBot/1.0" } });
+    if (page.ok) return htmlToText(await page.text());
+  } catch {
+    // unreachable site
+  }
+  return "";
 }
 
 Deno.serve(async (req) => {
@@ -66,15 +100,9 @@ Deno.serve(async (req) => {
 
     const { url, description, company }: AnalyzeBody = await req.json();
 
-    let source = description?.trim() ?? "";
-    if (url) {
-      try {
-        const page = await fetch(url, { headers: { "User-Agent": "BlimelyBot/1.0" } });
-        if (page.ok) source = htmlToText(await page.text());
-      } catch {
-        // Unreachable site — fall back to whatever description we have.
-      }
-    }
+    const source = url
+      ? await getSourceText(url, Deno.env.get("FIRECRAWL_API_KEY"))
+      : (description?.trim() ?? "");
 
     if (!source) {
       return new Response(JSON.stringify({ error: "No website text or description to analyze" }), {

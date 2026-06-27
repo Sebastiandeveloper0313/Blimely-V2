@@ -1,6 +1,7 @@
 import { cn } from "@workspace/ui/lib/utils";
 import {
   AlertCircle,
+  ArrowRight,
   Check,
   ChevronRight,
   Clock,
@@ -10,9 +11,7 @@ import {
   Layers,
   MessageCircle,
   Mic2,
-  Pause,
   Pencil,
-  Play,
   Plus,
   Share2,
   SkipForward,
@@ -21,14 +20,14 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
+import { useState } from "react";
 
 import { saveWorkspace, type Workspace } from "@/features/workspace/store";
 
-import { type Account, analysis, kpis, posts, queue, type QueueItem } from "./data";
-
-const CADENCE_OPTIONS = ["3 / week", "1 / day", "2 / day"];
+import { type Account, analysis, posts, queue, type QueueItem } from "./data";
 
 const GRAD = ["", "g2", "g3", "g4"];
+const CADENCE_OPTIONS = ["3 / week", "1 / day", "2 / day"];
 
 function SlideThumb({
   title,
@@ -44,10 +43,7 @@ function SlideThumb({
   className?: string;
 }) {
   return (
-    <div
-      className={cn("slide-thumb", GRAD[idx % 4], variant === "sm" && "sm", className)}
-      style={variant === "cover" ? { fontSize: ".82rem", padding: "1rem" } : undefined}
-    >
+    <div className={cn("slide-thumb", GRAD[idx % 4], variant === "sm" && "sm", className)}>
       {variant === "cover" && (
         <>
           <span className="frames">
@@ -60,128 +56,112 @@ function SlideThumb({
   );
 }
 
-/* ============================== OVERVIEW ============================== */
+/* ============================== HOME ============================== */
 
-export function Overview({
-  autopilot,
-  onToggle,
-  onNavigate,
+const hasWebsite = (ws: Workspace) => ws.website.trim() !== "" && ws.website.trim() !== "https://";
+
+export function Home({
   account,
+  ws,
+  onNavigate,
+  onAddWebsite,
 }: {
-  autopilot: boolean;
-  onToggle: () => void;
-  onNavigate: (key: string) => void;
   account: Account;
+  ws: Workspace;
+  onNavigate: (key: string) => void;
+  onAddWebsite: () => void;
 }) {
+  const steps = [
+    { label: "Add your website", done: hasWebsite(ws), action: onAddWebsite, platforms: false },
+    {
+      label: "Connect your TikTok",
+      done: Boolean(ws.tiktok),
+      action: () => onNavigate("settings"),
+      platforms: true,
+    },
+    {
+      label: "Generate your first slideshows",
+      done: false,
+      action: () => onNavigate("queue"),
+      platforms: false,
+    },
+    {
+      label: "Schedule your first post",
+      done: false,
+      action: () => onNavigate("queue"),
+      platforms: false,
+    },
+  ];
+  const completed = steps.filter((s) => s.done).length;
+
   return (
-    <>
-      <section className={cn("ap-hero", !autopilot && "paused")}>
-        <div>
-          <span className="ap-badge">
-            <span className="dot" /> {autopilot ? "Autopilot on" : "Autopilot paused"}
-          </span>
-          {autopilot ? (
-            <>
-              <h2>Your TikTok is running itself.</h2>
-              <p>
-                Blimely is generating, scheduling, and posting slideshows for{" "}
-                <b>{account.tiktok}</b>. Nothing needed from you.
-              </p>
-            </>
-          ) : (
-            <>
-              <h2>Autopilot is paused.</h2>
-              <p>
-                Your queue is on hold and nothing will post until you resume. Your scheduled
-                slideshows are safe.
-              </p>
-            </>
-          )}
-          <div className="ap-meta">
-            <div className="m">
-              <b>{autopilot ? account.nextPost : "On hold"}</b>
-              <span>Next post</span>
-            </div>
-            <div className="m">
-              <b>{account.cadence}</b>
-              <span>Cadence</span>
-            </div>
-            <div className="m">
-              <b>{queue.length}</b>
-              <span>In queue</span>
-            </div>
-          </div>
-        </div>
-        <div className="ap-cta">
-          <button className="ap-btn solid" onClick={onToggle}>
-            {autopilot ? <Pause /> : <Play />}
-            {autopilot ? "Pause autopilot" : "Resume autopilot"}
-          </button>
-          <button className="ap-btn ghost" onClick={() => onNavigate("queue")}>
-            Review the queue
-          </button>
-        </div>
-      </section>
-
-      <section className="kpis">
-        {kpis.map((k) => (
-          <div className="kpi" key={k.label}>
-            <div className="kpi-label">{k.label}</div>
-            <div className="kpi-val">{k.value}</div>
-            <div className={cn("kpi-delta", k.trend)}>
-              <TrendingUp /> {k.delta}
-            </div>
-          </div>
-        ))}
-      </section>
-
-      <div className="dash-cols">
-        <div className="card">
-          <div className="card-head">
-            <h2>Up next this week</h2>
-            <button className="ch-link" onClick={() => onNavigate("queue")}>
-              View queue <ChevronRight />
-            </button>
-          </div>
-          <div className="card-body">
-            <div className="q-rows">
-              {queue.slice(0, 4).map((item, i) => (
-                <QueueRow key={item.id} item={item} idx={i} compact />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="card-head">
-            <h2>Top recent post</h2>
-            <button className="ch-link" onClick={() => onNavigate("posts")}>
-              All posts <ChevronRight />
-            </button>
-          </div>
-          <div className="card-body">
-            <SlideThumb
-              title={posts[4]!.title}
-              frames={posts[4]!.frames}
-              idx={0}
-              variant="cover"
-              className="pc-thumb"
-            />
-            <div style={{ marginTop: ".9rem", display: "flex", gap: "1.1rem" }}>
-              <span className="pc-stat lead" style={{ fontWeight: 700 }}>
-                <Eye style={{ width: 15, height: 15 }} /> {posts[4]!.views} views
-              </span>
-              <span className="pc-stat">
-                <Heart style={{ width: 15, height: 15 }} /> {posts[4]!.likes}
-              </span>
-              <span className="pc-stat">
-                <MessageCircle style={{ width: 15, height: 15 }} /> {posts[4]!.comments}
-              </span>
-            </div>
-          </div>
-        </div>
+    <div className="home">
+      <div className="home-mark" aria-hidden="true">
+        <svg viewBox="0 0 100 100" width="46" height="46">
+          <rect width="100" height="100" rx="26" fill="url(#homemark)" />
+          <path
+            d="M34 32h34M34 50h27M34 68h18"
+            stroke="white"
+            strokeWidth="9"
+            strokeLinecap="round"
+          />
+          <defs>
+            <linearGradient id="homemark" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#5aa6ff" />
+              <stop offset="1" stopColor="#1566e6" />
+            </linearGradient>
+          </defs>
+        </svg>
       </div>
-    </>
+      <h1>Let's get your TikTok seen.</h1>
+
+      <div className="quickstart">
+        <div className="qs-head">
+          <h2>Quickstart</h2>
+          <span className="qs-count">
+            {completed}/{steps.length}
+          </span>
+        </div>
+        <p className="qs-sub">Complete these to get the most out of Blimely</p>
+        <div className="qs-divider" />
+        <div className="qs-steps">
+          {steps.map((s) => (
+            <button key={s.label} className={cn("qs-step", s.done && "done")} onClick={s.action}>
+              <span className="qs-check">{s.done && <Check />}</span>
+              <span className="qs-label">{s.label}</span>
+              {s.platforms && (
+                <span className="qs-platforms">
+                  <Mic2 />
+                </span>
+              )}
+              <span className="qs-arrow">
+                <ChevronRight />
+              </span>
+            </button>
+          ))}
+        </div>
+        <button className="btn-accent qs-cta" onClick={() => onNavigate("queue")}>
+          Continue setup <ArrowRight />
+        </button>
+      </div>
+
+      <div className="changelog-row">
+        <button className="btn-pill">
+          Changelog <ArrowRight />
+        </button>
+      </div>
+
+      <section className="home-section">
+        <h3>
+          <TrendingUp /> Recent on {account.tiktok}
+        </h3>
+        <div className="thumb-row">
+          {posts.slice(0, 4).map((p, i) => (
+            <SlideThumb key={p.id} title={p.title} frames={p.frames} idx={i} variant="cover" />
+          ))}
+        </div>
+      </section>
+    </div>
   );
 }
 
@@ -230,11 +210,11 @@ export function QueuePanel() {
         </button>
       </div>
       <div className="card-body">
-        <div className="gen-banner" style={{ marginBottom: "1.2rem" }}>
+        <div className="qbanner">
           <span className="gb-ico">
             <Sparkles />
           </span>
-          <div className="gb-txt">
+          <div>
             <b>Blimely keeps this full automatically.</b>
             <span>New slideshows are generated from your brand as slots open up.</span>
           </div>
@@ -261,7 +241,7 @@ export function PostsPanel() {
     <div className="card">
       <div className="card-head">
         <h2>Published posts</h2>
-        <span style={{ fontSize: ".85rem", color: "var(--ink-mute)", fontWeight: 600 }}>
+        <span style={{ fontSize: ".85rem", color: "var(--muted)", fontWeight: 600 }}>
           {posts.length} posts · 51.2k views
         </span>
       </div>
@@ -303,25 +283,168 @@ export function PostsPanel() {
 
 /* ============================== BRAND ============================== */
 
-export function BrandPanel({ account, ws }: { account: Account; ws: Workspace }) {
+function BrandEdit({ ws, onDone }: { ws: Workspace; onDone: () => void }) {
+  const base = ws.analysis ?? analysis;
+  const [company, setCompany] = useState(ws.company);
+  const [website, setWebsite] = useState(hasWebsite(ws) ? ws.website : "");
+  const [tiktok, setTiktok] = useState(ws.tiktok);
+  const [summary, setSummary] = useState(base.summary);
+  const [audience, setAudience] = useState(base.audience);
+  const [voice, setVoice] = useState(base.voice);
+  const [p1, setP1] = useState(base.painPoints[0] ?? "");
+  const [p2, setP2] = useState(base.painPoints[1] ?? "");
+  const [p3, setP3] = useState(base.painPoints[2] ?? "");
+
+  const save = () => {
+    const trimmed = website.trim();
+    const normalized = trimmed
+      ? /^https?:\/\//.test(trimmed)
+        ? trimmed
+        : `https://${trimmed}`
+      : ws.website;
+    saveWorkspace({
+      company: company.trim(),
+      website: normalized,
+      tiktok: tiktok.trim(),
+      mode: trimmed ? "website" : ws.mode,
+      analysis: {
+        summary: summary.trim(),
+        audience: audience.trim(),
+        painPoints: [p1, p2, p3].map((p) => p.trim()).filter(Boolean),
+        voice: voice.trim(),
+        source: ws.analysis?.source ?? "inputs",
+      },
+    });
+    onDone();
+  };
+
+  return (
+    <div className="card">
+      <div className="card-head">
+        <h2>Edit brand</h2>
+      </div>
+      <div className="card-body">
+        <div className="edit-grid">
+          <div className="edit-field">
+            <label htmlFor="be-company">Company name</label>
+            <input
+              id="be-company"
+              value={company}
+              placeholder="Your company"
+              onChange={(e) => setCompany(e.target.value)}
+            />
+          </div>
+          <div className="edit-field">
+            <label htmlFor="be-tiktok">TikTok handle</label>
+            <input
+              id="be-tiktok"
+              value={tiktok}
+              placeholder="@yourbrand"
+              onChange={(e) => setTiktok(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="edit-field">
+          <label htmlFor="be-website">Website</label>
+          <input
+            id="be-website"
+            value={website}
+            placeholder="yourbrand.com"
+            onChange={(e) => setWebsite(e.target.value)}
+          />
+        </div>
+        <div className="edit-field">
+          <label htmlFor="be-summary">What you do</label>
+          <textarea
+            id="be-summary"
+            rows={2}
+            value={summary}
+            onChange={(e) => setSummary(e.target.value)}
+          />
+        </div>
+        <div className="edit-field">
+          <label htmlFor="be-audience">Who it's for</label>
+          <textarea
+            id="be-audience"
+            rows={2}
+            value={audience}
+            onChange={(e) => setAudience(e.target.value)}
+          />
+        </div>
+        <div className="edit-field">
+          <label htmlFor="be-p1">Pain points</label>
+          <input
+            id="be-p1"
+            value={p1}
+            placeholder="Pain point 1"
+            onChange={(e) => setP1(e.target.value)}
+            style={{ marginBottom: ".5rem" }}
+          />
+          <input
+            value={p2}
+            placeholder="Pain point 2"
+            aria-label="Pain point 2"
+            onChange={(e) => setP2(e.target.value)}
+            style={{ marginBottom: ".5rem" }}
+          />
+          <input
+            value={p3}
+            placeholder="Pain point 3"
+            aria-label="Pain point 3"
+            onChange={(e) => setP3(e.target.value)}
+          />
+        </div>
+        <div className="edit-field">
+          <label htmlFor="be-voice">Brand voice</label>
+          <textarea
+            id="be-voice"
+            rows={2}
+            value={voice}
+            onChange={(e) => setVoice(e.target.value)}
+          />
+        </div>
+        <div className="edit-actions">
+          <button className="btn-ghost" onClick={onDone}>
+            Cancel
+          </button>
+          <button className="btn-accent" onClick={save}>
+            Save changes
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function BrandPanel({
+  account,
+  ws,
+  editing,
+  onEditingChange,
+}: {
+  account: Account;
+  ws: Workspace;
+  editing: boolean;
+  onEditingChange: (v: boolean) => void;
+}) {
   const fromWebsite = ws.mode === "website" && account.website;
   const tags = [ws.model, ...ws.categories].filter(Boolean);
-  // What Blimely understood about the business: real analysis if present,
-  // otherwise the placeholder copy.
   const brand = ws.analysis ?? analysis;
   const analyzedFromSite = ws.analysis?.source === "site";
+
+  if (editing) return <BrandEdit ws={ws} onDone={() => onEditingChange(false)} />;
 
   return (
     <>
       <div className="card">
         <div className="card-head">
           <h2>What Blimely learned</h2>
-          <button className="ch-link">
+          <button className="ch-link" onClick={() => onEditingChange(true)}>
             <Pencil /> Edit
           </button>
         </div>
         <div className="card-body">
-          <p style={{ color: "var(--ink-mute)", fontSize: ".9rem", marginBottom: "1rem" }}>
+          <p style={{ color: "var(--muted)", fontSize: ".9rem", marginBottom: "1rem" }}>
             {analyzedFromSite
               ? `Analyzed from your ${fromWebsite ? "website" : "description"}.`
               : "Drafted from your onboarding answers."}{" "}
@@ -333,7 +456,9 @@ export function BrandPanel({ account, ws }: { account: Account; ws: Workspace })
             </span>
             <div className="sr-meta">
               <b>{fromWebsite ? account.website : ws.company || "Your business"}</b>
-              <span>{fromWebsite ? "Source website · read & understood" : "From your description"}</span>
+              <span>
+                {fromWebsite ? "Source website · read & understood" : "From your description"}
+              </span>
             </div>
             <span className="sr-ok">
               <Check />
@@ -401,18 +526,10 @@ export function BrandPanel({ account, ws }: { account: Account; ws: Workspace })
 
 /* ============================== SETTINGS ============================== */
 
-export function SettingsPanel({
-  autopilot,
-  onToggle,
-  account,
-  ws,
-}: {
-  autopilot: boolean;
-  onToggle: () => void;
-  account: Account;
-  ws: Workspace;
-}) {
+export function SettingsPanel({ account, ws }: { account: Account; ws: Workspace }) {
+  const [autopilot, setAutopilot] = useState(true);
   const fromWebsite = ws.mode === "website" && account.website;
+
   return (
     <>
       <div className="card">
@@ -454,13 +571,13 @@ export function SettingsPanel({
         <div className="card-body" style={{ paddingTop: 0 }}>
           <div className="set-row">
             <div className="set-info">
-              <h3>Autopilot</h3>
-              <p>When on, Blimely posts to your TikTok automatically on the schedule below.</p>
+              <h3>Post automatically</h3>
+              <p>When on, Blimely posts to your TikTok on the schedule below.</p>
             </div>
             <button
               className={cn("toggle", autopilot && "on")}
-              onClick={onToggle}
-              aria-label="Toggle autopilot"
+              onClick={() => setAutopilot((v) => !v)}
+              aria-label="Toggle automatic posting"
             />
           </div>
           <div className="set-row">
@@ -497,7 +614,7 @@ export function SettingsPanel({
           <div className="set-row">
             <div className="set-info">
               <h3>Approval</h3>
-              <p>Let everything post on its own, or review each batch before it goes out.</p>
+              <p>Let everything post on its own, or review each batch first.</p>
             </div>
             <div className="seg">
               <button className="on">Auto-post</button>
